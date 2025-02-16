@@ -33,7 +33,7 @@ void main() {
 		redmean(color, top)
 	);
 
-	bvec2 edges = greaterThanEqual(delta.xy, vec2(SMAA_THRESHOLD));
+	immut bvec2 edges = greaterThanEqual(delta.xy, vec2(SMAA_THRESHOLD));
 
 	if (any(edges)) {
 		delta.zw = vec2(
@@ -51,7 +51,8 @@ void main() {
 		delta_max = max(delta_max.xy, delta.zw);
 
 		const float local_contrast_adaption_factor = 2.0;
-		immut bvec2 result = edges && greaterThanEqual(delta.xy, vec2(max(delta_max.x, delta_max.y) / local_contrast_adaption_factor));
+		immut bvec2 temp = greaterThanEqual(delta.xy, vec2(max(delta_max.x, delta_max.y) / local_contrast_adaption_factor));
+		immut bvec2 result = bvec2(edges.x && temp.x, edges.y && temp.y); // gotta do this instead of result && temp on AMD :(
 
 		if (any(result)) imageStore(edge, texel, vec4(
 			result, 0.0, 0.0
