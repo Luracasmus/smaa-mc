@@ -1,6 +1,6 @@
 option.VERSION=\u00A76SMAA\u00A7r-\u00A7dMC
 	option.VERSION.comment=https://github.com/Luracasmus/smaa-mc
-	suffix.VERSION=1.1.2
+	suffix.VERSION=1.1.3
 
 option.SMAA_THRESHOLD=\u00A7e⌚\u00A7r Contrast Threshold
 option.SMAA_THRESHOLD.comment=The threshold used in color-based edge detection\nLower values allow more edges to be anti-aliased
