@@ -50,8 +50,8 @@ void main() {
 
 		delta_max = max(delta_max.xy, delta.zw);
 
-		const float local_contrast_adaption_factor = 2.0;
-		immut bvec2 temp = greaterThanEqual(delta.xy, vec2(max(delta_max.x, delta_max.y) / local_contrast_adaption_factor));
+		const float local_contrast_adaptation_factor = 2.0;
+		immut bvec2 temp = greaterThanEqual(delta.xy, (max(delta_max.x, delta_max.y) / local_contrast_adaptation_factor).xx);
 		immut bvec2 result = bvec2(edges.x && temp.x, edges.y && temp.y); // gotta do this instead of result && temp on AMD :(
 
 		if (any(result)) imageStore(edge, texel, vec4(
