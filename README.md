@@ -9,4 +9,4 @@ It intelligently smoothes diagonal edges to reduce staircase-like artifacts with
 * **[Iris](https://github.com/IrisShaders/Iris)** with [features](https://shaders.properties/current/reference/shadersproperties/flags/):
   * `COMPUTE_SHADERS`
   * `CUSTOM_IMAGES`
-* **[GLSL](https://www.wikiwand.com/en/OpenGL_Shading_Language) 4.60+**
+* **[GLSL](https://www.wikiwand.com/en/OpenGL_Shading_Language) 4.60.8+**
