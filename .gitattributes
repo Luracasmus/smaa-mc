@@ -1,7 +1,9 @@
-*.glsl text linguist-language=glsl
-*.vsh text linguist-language=glsl
-*.gsh text linguist-language=glsl
-*.tcs text linguist-language=glsl
-*.tes text linguist-language=glsl
-*.fsh text linguist-language=glsl
-*.csh text linguist-language=glsl
+*.glsl source linguist-language=GLSL
+*.vsh source linguist-language=GLSL
+*.gsh source linguist-language=GLSL
+*.tcs source linguist-language=GLSL
+*.tes source linguist-language=GLSL
+*.fsh source linguist-language=GLSL
+*.csh source linguist-language=GLSL
+
+*.lang source linguist-language=Java Properties
