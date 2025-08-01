@@ -10,6 +10,11 @@
 #define DEBUG_BW 0 // [0 1 2]
 #define CONST_IMMUT 1 // [0 1 2]
 
+// GEOMETRY
+	#define CLOUD_FOG_END 128 // [2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 24 26 28 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100 102 104 106 108 110 112 114 116 118 120 122 124 126 128]
+	#define BORDER_FOG_REL_START -16 // [-512 -256 -128 -64 -32 -16 -8 -4 -2]
+	#define LINE_WIDTH 4 // [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15]
+
 #if (CONST_IMMUT == 1 && defined MC_GL_VENDOR_NVIDIA) || CONST_IMMUT == 2
 	#define immut const
 #else
@@ -17,8 +22,8 @@
 #endif
 
 /*
-	// Clear needs to be enabled in dimensions where the sky geometry isn't rendered, such as in the nether
-	// we currently don't disable it in any dimension, even though it should be safe in the overworld and the end,
+	// Clear needs to be enabled in dimensions where the sky geometry isn't rendered, such as the nether
+	// We currently don't disable it in any dimension, even though it should be safe in the overworld and the end,
 	// as it would make the shader pack too complex, and possibly risk breaking some mods
 	const bool colortex0Clear = true;
 	const int colortex0Format = RGBA8;

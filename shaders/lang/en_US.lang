@@ -1,4 +1,4 @@
-option.VERSION=§6SMAA§r-§MC
+option.VERSION=§6SMAA§r-§dMC
 	option.VERSION.comment=https://github.com/Luracasmus/smaa-mc
 	suffix.VERSION=1.1.3
 
@@ -25,3 +25,13 @@ option.CONST_IMMUT=\u00A7e⌚\u00A7r Immutable Constants
 	value.CONST_IMMUT.0=§cOff
 	value.CONST_IMMUT.1=§c⚠§r On (assume support based on device)
 	value.CONST_IMMUT.2=§c⚠§r On (always)
+
+screen.GEOMETRY=§6◀§r Geometry Rendering §6▶
+	option.CLOUD_FOG_END=§b⌚§r Cloud Fog End
+		suffix.CLOUD_FOG_END=\ chunks
+
+	option.BORDER_FOG_REL_START=§b⌚§r Relative Border Fog Start
+		suffix.BORDER_FOG_REL_START=\ blocks
+
+	option.LINE_WIDTH=§b⌚§r Line Width
+		option.LINE_WIDTH.comment=Determines the width of block selection outlines and fishing rod lines

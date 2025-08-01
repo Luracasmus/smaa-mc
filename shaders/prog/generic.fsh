@@ -68,21 +68,13 @@ void main() {
 		immut float dist = length(pe);
 
 		#ifdef CLOUD_FOG
-			// Iris doesn't provide any uniforms for the cloud distance,
-			// and we don't want to be doing a bunch of stuff with atomics to calculate the distance to the furthest cloud vertices,
-			// so we assume it's always 128 chunks (maximum Cloud Distance in Vanilla)
-			const float cloud_fog_end = 2048.0;
-
-			immut float visibility = linear_step(cloud_fog_end, 0.0, dist);
+			immut float visibility = linear_step(float(CLOUD_FOG_END * 16), 0.0, dist);
 			colortex0.a *= visibility;
 		#else
-			// todo!() make sure this matches Vanilla fog
-			const float border_fog_start = 16.0;
-
 			immut float cyl_dist = max(length(pe.xz), abs(pe.y));
 			immut float fog = max(
-				linear_step(fogStart, fogEnd, dist),
-				linear_step(far - border_fog_start, far, cyl_dist)
+				linear_step(fogStart, fogEnd, dist), // Spherical environment fog
+				linear_step(far + float(BORDER_FOG_REL_START), far, cyl_dist) // Cylidrical border fog
 			);
 
 			colortex0.rgb = mix(colortex0.rgb, fogColor, fog);

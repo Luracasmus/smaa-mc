@@ -15,3 +15,13 @@ option.CONST_IMMUT=§e⌚§r Invariabla Konstanter
 	option.CONST_IMMUT.comment=Markerar alla shadervariabler som kan vara invariabla som konstanta, vilket kan möjliggöra bättre optimeringar\n\n§c⚠§r Kan vara inkompatibelt med vissa icke-NVIDIA/Geforce-drivrutiner
 	value.CONST_IMMUT.1=§c⚠§r På (anta stöd baserat på enhet)
 	value.CONST_IMMUT.2=§c⚠§r På (alltid)
+
+screen.GEOMETRY=§6◀§r Geometry Rendering §6▶
+	option.CLOUD_FOG_END=§b⌚§r Slut på Molndimma
+		suffix.CLOUD_FOG_END=\ datablock
+
+	option.BORDER_FOG_REL_START=§b⌚§r Relativ Början på Gränsdimma
+		suffix.BORDER_FOG_REL_START=\ block
+
+	option.LINE_WIDTH=§b⌚§r Linjetjocklek
+		option.LINE_WIDTH.comment=Bestämmer tjockleken av blockväljningsmarkeringar och fiskespötrådar
