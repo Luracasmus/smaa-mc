@@ -1,17 +1,17 @@
-option.SMAA_THRESHOLD=\u00A7e⌚\u00A7r Kontrasttröskel
-option.SMAA_THRESHOLD.comment=Tröskeln som används i färgbaserad kantdetektering\nLägre värden låter fler kanter kantutjämnas
+option.SMAA_THRESHOLD=§e⌚§r Kontrasttröskel
+	option.SMAA_THRESHOLD.comment=Tröskeln som används i färgbaserad kantdetektering\nLägre värden gör att fler kanter kantutjämnas
 
-option.SMAA_SEARCH=\u00A7e⌚\u00A7r Söksteg
+option.SMAA_SEARCH=§e⌚§r Söksteg
 	option.SMAA_SEARCH.comment=Det maximala antalet steg i vertikala och horisontella mönstersökningar\nAvståndet sökt i pixlar är dubbelt så stort
 
-option.SMAA_SEARCH_DIAG=\u00A7e⌚\u00A7r Diagonala Söksteg
+option.SMAA_SEARCH_DIAG=§e⌚§r Diagonala Söksteg
 	option.SMAA_SEARCH_DIAG.comment=Det maximala antalet diagonala steg/pixlar som söks i mönstersökningar
 
-option.SMAA_CORNER=\u00A7e⌚\u00A7r Hörnrundning 
+option.SMAA_CORNER=§e⌚§r Hörnrundning
 
 option.DEBUG_BW=\u00A7e⌚\u00A7r Visualisera Blandningsvikter
 
-option.CONST_IMMUT=\u00A7e⌚\u00A7r Invariabla Konstanter
-	option.CONST_IMMUT.comment=Markerar alla shadervariabler som kan vara invariabla som konstanta, vilket kan möjliggöra bättre optimeringar\n\u00A7cKan vara inkompatibelt med vissa drivrutiner
-	value.CONST_IMMUT.1=Endast NVIDIA
-	value.CONST_IMMUT.2=\u00A7cAlltid
+option.CONST_IMMUT=§e⌚§r Invariabla Konstanter
+	option.CONST_IMMUT.comment=Markerar alla shadervariabler som kan vara invariabla som konstanta, vilket kan möjliggöra bättre optimeringar\n\n§c⚠§r Kan vara inkompatibelt med vissa icke-NVIDIA/Geforce-drivrutiner
+	value.CONST_IMMUT.1=§c⚠§r På (anta stöd baserat på enhet)
+	value.CONST_IMMUT.2=§c⚠§r På (alltid)

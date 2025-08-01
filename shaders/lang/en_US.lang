@@ -1,19 +1,19 @@
-option.VERSION=\u00A76SMAA\u00A7r-\u00A7dMC
+option.VERSION=§6SMAA§r-§MC
 	option.VERSION.comment=https://github.com/Luracasmus/smaa-mc
 	suffix.VERSION=1.1.3
 
-option.SMAA_THRESHOLD=\u00A7e⌚\u00A7r Contrast Threshold
-option.SMAA_THRESHOLD.comment=The threshold used in color-based edge detection\nLower values allow more edges to be anti-aliased
+option.SMAA_THRESHOLD=§e⌚§r Contrast Threshold
+	option.SMAA_THRESHOLD.comment=The threshold used in color-based edge detection\nLower values cause more edges to be anti-aliased
 
-option.SMAA_SEARCH=\u00A7e⌚\u00A7r Search Steps
+option.SMAA_SEARCH=§e⌚§r Search Steps
 	option.SMAA_SEARCH.comment=The maximum amount of steps in vertical and horizontal pattern searches\nDistance searched in pixels is double this value
 
-option.SMAA_SEARCH_DIAG=\u00A7e⌚\u00A7r Diagonal Search Steps
+option.SMAA_SEARCH_DIAG=§e⌚§r Diagonal Search Steps
 	option.SMAA_SEARCH_DIAG.comment=The maximum amount of diagonal steps/pixels searched in pattern searches
-	value.SMAA_SEARCH_DIAG.0=\u00A7cOff
+	value.SMAA_SEARCH_DIAG.0=§cOff
 
-option.SMAA_CORNER=\u00A7e⌚\u00A7r Corner Rounding
-	value.SMAA_CORNER.0=\u00A7cOff
+option.SMAA_CORNER=§e⌚§r Corner Rounding
+	value.SMAA_CORNER.0=§cOff
 
 option.DEBUG_BW=\u00A7e⌚\u00A7r Visualize Blend Weights
 	value.DEBUG_BW.0=Off
@@ -21,7 +21,7 @@ option.DEBUG_BW=\u00A7e⌚\u00A7r Visualize Blend Weights
 	value.DEBUG_BW.2=\u00A7cY\u00A7aZ\u00A79W
 
 option.CONST_IMMUT=\u00A7e⌚\u00A7r Immutable Constants
-	option.CONST_IMMUT.comment=Marks all shader variables that can be immutable as constant, possibly enabling better optimizations\n\u00A7cMay be incompatible with some drivers
-	value.CONST_IMMUT.0=\u00A7cOff
-	value.CONST_IMMUT.1=NVIDIA Only
-	value.CONST_IMMUT.2=\u00A7cAlways
+	option.CONST_IMMUT.comment=Marks all shader variables that can be immutable as constant, possibly enabling better optimizations\n\n§c⚠§r May be incompatible with some non-NVIDIA/Geforce graphics drivers
+	value.CONST_IMMUT.0=§cOff
+	value.CONST_IMMUT.1=§c⚠§r On (assume support based on device)
+	value.CONST_IMMUT.2=§c⚠§r On (always)

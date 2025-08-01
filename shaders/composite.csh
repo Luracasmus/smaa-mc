@@ -1,10 +1,11 @@
-#include "/lib/core.glsl"
+#include "/prelude/core.glsl"
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+const vec2 workGroupsRender = vec2(1.0, 1.0);
 
 uniform sampler2D colortex0;
 uniform layout(rg8) restrict writeonly image2D edge;
 uniform layout(rgba16) restrict writeonly image2D tempCol;
-
-#include "/lib/srgb.glsl"
 
 // https://www.wikiwand.com/en/articles/Color_difference
 float redmean(vec3 a, vec3 b) {
