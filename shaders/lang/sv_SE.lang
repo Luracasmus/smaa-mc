@@ -20,8 +20,7 @@ screen.GEOMETRY=§6◀§r Geometry Rendering §6▶
 	option.CLOUD_FOG_END=§b⌚§r Slut på Molndimma
 		suffix.CLOUD_FOG_END=\ datablock
 
-	option.BORDER_FOG_REL_START=§b⌚§r Relativ Början på Gränsdimma
-		suffix.BORDER_FOG_REL_START=\ block
+	option.BORDER_FOG_START_RATIO=§b⌚§r Början på Gränsdimma
 
 	option.LINE_WIDTH=§b⌚§r Linjetjocklek
 		option.LINE_WIDTH.comment=Bestämmer tjockleken av blockväljningsmarkeringar och fiskespötrådar

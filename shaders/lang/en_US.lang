@@ -30,8 +30,7 @@ screen.GEOMETRY=§6◀§r Geometry Rendering §6▶
 	option.CLOUD_FOG_END=§b⌚§r Cloud Fog End
 		suffix.CLOUD_FOG_END=\ chunks
 
-	option.BORDER_FOG_REL_START=§b⌚§r Relative Border Fog Start
-		suffix.BORDER_FOG_REL_START=\ blocks
+	option.BORDER_FOG_START_RATIO=§b⌚§r Border Fog Start Ratio
 
 	option.LINE_WIDTH=§b⌚§r Line Width
 		option.LINE_WIDTH.comment=Determines the width of block selection outlines and fishing rod lines

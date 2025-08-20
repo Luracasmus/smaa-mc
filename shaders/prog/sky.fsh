@@ -35,6 +35,6 @@ void main() {
 	colortex0 = sky(normalize(view));
 
 	if (renderStage == MC_RENDER_STAGE_STARS) {
-		colortex0 += v.tint; // todo!() this seems to differ a bit from Vanilla
+		colortex0 += v.tint; // TODO: this seems to differ a bit from vanilla
 	}
 }
