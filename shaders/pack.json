@@ -1,0 +1,5 @@
+{
+  "_comment": "Aperture shader pack implementing a modified SMAA 1x.",
+  "name": "SMAA-MC",
+  "version": "0.1.0"
+}
