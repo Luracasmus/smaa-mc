@@ -46,7 +46,8 @@ export function configurePipeline(pipeline: PipelineConfig): void {
 		.blur(true)
 		.clamp(true)
 		.type(PixelType.UNSIGNED_BYTE)
-		.format(Format.RG8);
+		.format(Format.RG8)
+		.load();
 
 	let smaaSearchTex = pipeline
 		.importRawTexture("smaaSearchTex", "tex/smaa_search.bin")
@@ -56,7 +57,8 @@ export function configurePipeline(pipeline: PipelineConfig): void {
 		.blur(false)
 		.clamp(true)
 		.type(PixelType.UNSIGNED_BYTE)
-		.format(Format.R8);
+		.format(Format.R8)
+		.load();
 
 	pipeline
 		.createObjectShader("basic", Usage.BASIC)
