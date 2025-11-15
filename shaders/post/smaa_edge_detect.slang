@@ -12,6 +12,7 @@ WTexture2D<float3> color1Img;
 [format("rg8")]
 WTexture2D<float2> smaaEdgeImg;
 
+// https://www.wikiwand.com/en/articles/Color_difference
 float redmean(float3 a, float3 b) {
 	const float r = step(0.5, lerp(a.r, b.r, 0.5));
 	const float3 d = a - b;
