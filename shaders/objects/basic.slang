@@ -17,7 +17,7 @@ VertexOutput vertexMain(Vertex input) {
 
     float3 modelPos = input.pos().xyz;
 
-    output.position = mul(input.projectionMatrix(), float4(rot_trans_mmul(input.viewMatrix(), modelPos), 1.0)); // Not sure why we can't use `proj_mmul` here.
+    output.position = proj_mmul(input.projectionMatrix(), rot_trans_mmul(input.viewMatrix(), modelPos)); // Not sure why we can't use `proj_mmul` here.
     output.uv = input.uv();
     output.color = input.color() * input.ao();
     output.light = input.light();
@@ -41,7 +41,7 @@ float4 fragmentMain(VertexOutput input) : SV_Target0 {
     if (FOG) {
         float mixValue = (input.distance - ap.world.fogStart) / (ap.world.fogEnd - ap.world.fogStart);
 
-        float renderDistanceFogStart = clamp(ap.world.renderDistance / 10, 4, 64);
+        float renderDistanceFogStart = clamp(ap.world.renderDistance / 10.0, 4.0, 64.0);
         mixValue = max(mixValue, (input.distance - renderDistanceFogStart) / (ap.world.renderDistance - renderDistanceFogStart));
 
         color = lerp(color, ap.world.fogColor, clamp(mixValue, 0.0, 1.0));
