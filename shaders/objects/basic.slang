@@ -17,7 +17,7 @@ VertexOutput vertexMain(Vertex input) {
 
     float3 modelPos = input.pos().xyz;
 
-    output.position = proj_mmul(input.projectionMatrix(), rot_trans_mmul(input.viewMatrix(), modelPos)); // Not sure why we can't use `proj_mmul` here.
+    output.position = proj_mmul(input.projectionMatrix(), rot_trans_mmul(input.viewMatrix(), modelPos));
     output.uv = input.uv();
     output.color = input.color() * input.ao();
     output.light = input.light();
