@@ -1,0 +1,11 @@
+{
+	"pack": {
+		"min_format": [91, 0],
+		"max_format": [91, 0],
+		"pack_format": 91,
+		"description": [
+			{ "text": "Post-process anti-aliasing\n" },
+			{ "text": "By Luracasmus", "color": "dark_gray" }
+		]
+	}
+}

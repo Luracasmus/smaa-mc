@@ -1,0 +1,92 @@
+{
+	"targets": {
+		"swap": {
+			"persistent": true
+		},
+		"edge": {
+			"persistent": false,
+			"clear_color": [0.0, 0.0, 0.0, 0.0]
+		},
+		"blend_weight": {
+			"persistent": false,
+			"clear_color": [0.0, 0.0, 0.0, 0.0]
+		}
+	},
+	"passes": [
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "smaa_lura:post/0_edge_detect",
+			"inputs": [
+				{
+					"sampler_name": "Main",
+					"bilinear": false,
+					"target": "minecraft:main",
+					"use_depth_buffer": false
+				}
+			],
+			"output": "edge",
+			"uniforms": {}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "smaa_lura:post/1_blit",
+			"inputs": [
+				{
+					"sampler_name": "Main",
+					"bilinear": false,
+					"target": "minecraft:main",
+					"use_depth_buffer": false
+				}
+			],
+			"output": "swap"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "smaa_lura:post/2_bw_calc",
+			"inputs": [
+				{
+					"sampler_name": "Area",
+					"bilinear": true,
+					"location": "smaa_lura:area",
+					"width": 160,
+					"height": 560
+				},
+				{
+					"sampler_name": "Edge",
+					"bilinear": true,
+					"target": "edge",
+					"use_depth_buffer": false
+				},
+				{
+					"sampler_name": "Search",
+					"bilinear": false,
+					"location": "smaa_lura:search",
+					"width": 64,
+					"height": 16
+				}
+			],
+			"output": "blend_weight",
+			"uniforms": {}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "smaa_lura:post/3_blend",
+			"inputs": [
+				{
+					"sampler_name": "Swap",
+					"bilinear": true,
+					"target": "swap",
+					"use_depth_buffer": false
+				},
+				{
+					"sampler_name": "BlendWeight",
+					"bilinear": false,
+					"target": "blend_weight",
+					"use_depth_buffer": false
+				}
+			],
+			"output": "minecraft:main",
+			"uniforms": {}
+		}
+	]
+}
