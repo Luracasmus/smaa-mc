@@ -1,0 +1,5 @@
+Copyright (C) 2024-2026 Luracasmus
+
+All rights reserved unless explicitly stated.
+
+Some files may be available under more permissive licenses specified within each file.

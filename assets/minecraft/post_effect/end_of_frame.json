@@ -3,18 +3,16 @@
 		"swap": {
 			"persistent": true
 		},
-		"edge": {
-			"persistent": false,
-			"clear_color": [0.0, 0.0, 0.0, 0.0]
+		"edge_or_swap": {
+			"persistent": true
 		},
 		"blend_weight": {
-			"persistent": false,
-			"clear_color": [0.0, 0.0, 0.0, 0.0]
+			"persistent": true
 		}
 	},
 	"passes": [
 		{
-			"vertex_shader": "minecraft:core/screenquad",
+			"vertex_shader": "smaa_lura:post/screen_tri",
 			"fragment_shader": "smaa_lura:post/0_edge_detect",
 			"inputs": [
 				{
@@ -24,11 +22,11 @@
 					"use_depth_buffer": false
 				}
 			],
-			"output": "edge",
+			"output": "edge_or_swap",
 			"uniforms": {}
 		},
 		{
-			"vertex_shader": "minecraft:core/screenquad",
+			"vertex_shader": "smaa_lura:post/screen_tri",
 			"fragment_shader": "smaa_lura:post/1_blit",
 			"inputs": [
 				{
@@ -41,7 +39,7 @@
 			"output": "swap"
 		},
 		{
-			"vertex_shader": "minecraft:core/screenquad",
+			"vertex_shader": "smaa_lura:post/screen_tri",
 			"fragment_shader": "smaa_lura:post/2_bw_calc",
 			"inputs": [
 				{
@@ -54,7 +52,7 @@
 				{
 					"sampler_name": "Edge",
 					"bilinear": true,
-					"target": "edge",
+					"target": "edge_or_swap",
 					"use_depth_buffer": false
 				},
 				{
@@ -69,12 +67,12 @@
 			"uniforms": {}
 		},
 		{
-			"vertex_shader": "minecraft:core/screenquad",
+			"vertex_shader": "smaa_lura:post/screen_tri",
 			"fragment_shader": "smaa_lura:post/3_blend",
 			"inputs": [
 				{
 					"sampler_name": "Swap",
-					"bilinear": true,
+					"bilinear": false,
 					"target": "swap",
 					"use_depth_buffer": false
 				},
@@ -82,6 +80,20 @@
 					"sampler_name": "BlendWeight",
 					"bilinear": false,
 					"target": "blend_weight",
+					"use_depth_buffer": false
+				}
+			],
+			"output": "edge_or_swap",
+			"uniforms": {}
+		},
+		{
+			"vertex_shader": "smaa_lura:post/screen_tri",
+			"fragment_shader": "smaa_lura:post/4_cas",
+			"inputs": [
+				{
+					"sampler_name": "Swap",
+					"bilinear": false,
+					"target": "edge_or_swap",
 					"use_depth_buffer": false
 				}
 			],

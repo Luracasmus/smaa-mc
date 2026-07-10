@@ -1,1 +1,0 @@
-#include "/prog/sky.fsh"

@@ -1,37 +1,100 @@
-#include "/prelude/core.glsl"
+/*
+	SMAA 1x Color Edge Detection
+	https://github.com/iryoku/smaa
 
-layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
-const vec2 workGroupsRender = vec2(1.0, 1.0);
+	Copyright (C) 2013 Jorge Jimenez (jorge@iryoku.com)
+	Copyright (C) 2013 Jose I. Echevarria (joseignacioechevarria@gmail.com)
+	Copyright (C) 2013 Belen Masia (bmasia@unizar.es)
+	Copyright (C) 2013 Fernando Navarro (fernandn@microsoft.com)
+	Copyright (C) 2013 Diego Gutierrez (diegog@unizar.es)
+	Copyright (C) 2024-2026 Luracasmus
 
-uniform vec2 pixSize;
-uniform sampler2D blendWeightS, tempColS;
-uniform layout(rgba8) restrict writeonly image2D colorimg0;
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	this software and associated documentation files (the "Software"), to deal in
+	the Software without restriction, including without limitation the rights to
+	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+	the Software, and to permit persons to whom the Software is furnished to do so,
+	subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software. As clarification, there is no
+	requirement that the copyright notice and permission be included in binary
+	distributions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#version 450
+
+#define DEBUG_BW 0 // [0 1 2]
+
+#define immut
+
+#moj_import <smaa_lura:srgb.glsl>
+
+layout(depth_unchanged) out lowp float gl_FragDepth;
+
+uniform lowp sampler2D BlendWeightSampler, SwapSampler;
+
+layout(std140) uniform SamplerInfo {
+	lowp vec2 OutSize; // Unused.
+	lowp vec2 BlendWeightSize; // Unused.
+	highp vec2 SwapSize;
+};
+
+out lowp vec4 fragColor;
+
+// Manual `textureLod(SwapSampler, coord, 0.0).rgb` that actually gets interpolation right,
+// since the texture is in sRGB.
+lowp vec3 bilinearSampleSwap(
+	highp vec2 pix_size, // Screen space scale of one texel.
+	highp vec2 lower_texel_coord, // Texel space coordinates of the current texel minus `0.5`.
+	highp vec2 blending_offset // Texel space offset.
+) {
+	immut highp vec2 offset_texel_coord = lower_texel_coord + blending_offset;
+	highp vec2 texel_f32;
+	immut lowp vec2 a = modf(offset_texel_coord, texel_f32);
+	immut lowp ivec2 texel = ivec2(texel_f32 + 0.5);
+
+	return mix(
+		mix(linear(texelFetch(SwapSampler, texel, 0).rgb), linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0)).rgb), a.x),
+		mix(linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb), linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).rgb), a.x),
+		a.y
+	);
+}
 
 void main() {
-	immut ivec2 texel = ivec2(gl_GlobalInvocationID.xy);
+	immut lowp ivec2 texel = ivec2(gl_FragCoord.xy);
 
-	immut vec4 a = vec4(
-		texelFetchOffset(blendWeightS, texel, 0, ivec2(1, 0)).w,
-		texelFetchOffset(blendWeightS, texel, 0, ivec2(0, 1)).y,
-		texelFetch(blendWeightS, texel, 0).zx
+	immut lowp vec4 a = vec4(
+		texelFetchOffset(BlendWeightSampler, texel, 0, ivec2(1, 0)).w,
+		texelFetchOffset(BlendWeightSampler, texel, 0, ivec2(0, 1)).y,
+		texelFetch(BlendWeightSampler, texel, 0).zx
 	);
 
-	vec3 color;
+	lowp vec3 color;
 
 	if (dot(a, vec4(1.0)) < 1.0e-5) {
-		color = texelFetch(tempColS, texel, 0).rgb;
+		color = texelFetch(SwapSampler, texel, 0).rgb;
 	} else {
 		immut bool h = max(a.x, a.z) > max(a.y, a.w);
 
-		immut vec4 blending_offset = h ? vec4(a.x, 0.0, a.z, 0.0) : vec4(0.0, a.y, 0.0, a.w);
+		immut highp vec4 blending_offset = h ? vec4(a.x, 0.0, a.z, 0.0) : vec4(0.0, a.y, 0.0, a.w);
 
-		vec2 blending_weight = h ? a.xz : a.yw;
+		lowp vec2 blending_weight = h ? a.xz : a.yw;
 		blending_weight /= dot(blending_weight, vec2(1.0));
 
-		immut vec2 coord = fma(vec2(texel), pixSize, 0.5 * pixSize);
+		immut highp vec2 pix_size = 1.0 / SwapSize;
+		immut highp vec2 lower_texel_coord = gl_FragCoord.xy - 0.5;
 
-		color = blending_weight.x * textureLod(tempColS, fma(blending_offset.xy, pixSize, coord), 0.0).rgb;
-		color += blending_weight.y * textureLod(tempColS, fma(blending_offset.zw, -pixSize, coord), 0.0).rgb;
+		color = blending_weight.x * bilinearSampleSwap(pix_size, lower_texel_coord, blending_offset.xy);
+		color += blending_weight.y * bilinearSampleSwap(pix_size, lower_texel_coord, blending_offset.zw);
+		color = srgb(color);
 	}
 
 	#if DEBUG_BW
@@ -41,8 +104,8 @@ void main() {
 			#define DEBUG_BW_COMP yzw
 		#endif
 
-		color = texelFetch(blendWeightS, texel, 0).DEBUG_BW_COMP;
+		color = texelFetch(BlendWeightSampler, texel, 0).DEBUG_BW_COMP;
 	#endif
 
-	imageStore(colorimg0, texel, vec4(srgb(color), 0.0));
+	fragColor = vec4(color, 0.0);
 }

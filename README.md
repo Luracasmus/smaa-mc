@@ -1,13 +1,9 @@
-A simple Iris shader pack implementing [Enhanced Subpixel Morphological Antialiasing 1x](https://github.com/iryoku/smaa) with improved edge detection using [redmean color difference](https://www.wikiwand.com/en/articles/Color_difference#sRGB)
+A **Vanilla shader resource pack** implementing anti-aliasing and sharpening using the end-of-frame post effect added in Minecraft 26.3 Snapshot 3. The technique is a modified [Enhanced Subpixel Morphological Antialiasing 1x](https://github.com/iryoku/smaa) followed by a modified [FidelityFX Contrast Adaptive Sharpening 1.2](https://gpuopen.com/manuals/fidelityfx_sdk/techniques/contrast-adaptive-sharpening/).
 
-It intelligently smoothes diagonal edges to reduce staircase-like artifacts with minimal performance impact, while leaving color, lighting and large-scale geometry as identical as possible to vanilla Minecraft. It includes the highly optimized implementation of vanilla-like rendering from [Base-460C](https://github.com/Luracasmus/Base-460C)
+**The shaders require graphics drivers with support for GLSL 4.50**. If you have a decently modern non-macOS device, it probably supports this, but you might have to update your graphics drivers. If support is missing, the pack will fail to load.
 
-## Requirements
+## License
 
-> If you have a decently modern non-macOS device it probably supports everything you need, but you might have to update your Iris and graphics drivers
+*See [LICENSE.txt](LICENSE.txt) and each individual file.*
 
-* **[Iris](https://github.com/IrisShaders/Iris)** with [features](https://shaders.properties/current/reference/shadersproperties/flags/):
-  * `COMPUTE_SHADERS`
-  * `CUSTOM_IMAGES`
-  * `ENTITY_TRANSLUCENT`
-* **[GLSL](https://www.wikiwand.com/en/OpenGL_Shading_Language) 4.60.8+**
+The resource pack contains some files licensed "All rights reserved unless explicitly stated." and some under more permissive licenses (the ones deemed more likely useful for inclusion in other projects). This is to prevent unmodified or barely modified copies of the pack from being distributed without permission. Please contact me if you want to use the files for anything not permitted by the licenses.

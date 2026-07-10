@@ -1,11 +1,17 @@
-#version 330
+/*
+	Copyright (C) 2026 Luracasmus
 
-uniform sampler2D MainSampler;
+	All rights reserved unless explicitly stated.
+*/
 
-in vec2 texCoord;
+#version 450
 
-out vec4 fragColor;
+layout(depth_unchanged) out lowp float gl_FragDepth;
+
+uniform lowp sampler2D MainSampler;
+
+out lowp vec4 fragColor;
 
 void main(){
-	fragColor = texture(MainSampler, texCoord);
+	fragColor = vec4(texelFetch(MainSampler, ivec2(gl_FragCoord.xy), 0).rgb, 0.0);
 }
