@@ -45,8 +45,9 @@ out lowp vec4 fragColor;
 
 lowp vec3 saturate(lowp vec3 v) { return clamp(v, 0.0, 1.0); }
 
-lowp vec3 min3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return min(a, min(b, c)); }
-lowp vec3 max3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return max(a, max(b, c)); }
+// These without the `cas_`-prefixes seem to collide with built-in functions somehow on Vulkan on AMD+Mesa.
+lowp vec3 cas_min3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return min(a, min(b, c)); }
+lowp vec3 cas_max3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return max(a, max(b, c)); }
 
 lowp float luminance(lowp vec3 color) { return dot(color, vec3(0.299, 0.587, 0.114)); }
 
@@ -75,11 +76,11 @@ void main() {
 	//  d e f * 0.5  +  d e f * 0.5
 	//  g h i             h
 	// These are 2.0x bigger (factored out the extra multiply).
-	lowp vec3 minimum = min3(min3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	minimum += min3(min3(minimum, cas_nbh[0][0], cas_nbh[2][0]), cas_nbh[0][2], cas_nbh[2][2]);
+	lowp vec3 minimum = cas_min3(cas_min3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
+	minimum += cas_min3(cas_min3(minimum, cas_nbh[0][0], cas_nbh[2][0]), cas_nbh[0][2], cas_nbh[2][2]);
 
-	lowp vec3 maximum = max3(max3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	maximum += max3(max3(maximum, cas_nbh[0][0], cas_nbh[2][0]), cas_nbh[0][2], cas_nbh[2][2]);
+	lowp vec3 maximum = cas_max3(cas_max3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
+	maximum += cas_max3(cas_max3(maximum, cas_nbh[0][0], cas_nbh[2][0]), cas_nbh[0][2], cas_nbh[2][2]);
 
 	// Smooth minimum distance to signal limit divided by smooth max.
 	immut lowp vec3 amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
