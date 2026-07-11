@@ -24,7 +24,7 @@
 	THE SOFTWARE.
 */
 
-#version 450
+#version 440
 
 #define CAS_SHARPNESS 0.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
@@ -35,11 +35,6 @@
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform lowp sampler2D SwapSampler;
-
-layout(std140) uniform SamplerInfo {
-	lowp vec2 OutSize; // Unused.
-	highp vec2 SwapSize;
-};
 
 out lowp vec4 fragColor;
 
@@ -93,5 +88,10 @@ void main() {
 	immut lowp float weight = sharpness * luminance(amplify);
 	immut lowp float rcp_rcp_weight = fma(weight, 4.0, 1.0); // This naming is cursed.
 
-	fragColor = vec4(srgb(saturate(((cas_nbh[1][0] + cas_nbh[0][1] + cas_nbh[2][1] + cas_nbh[1][2]) * weight + cas_nbh[1][1]) / rcp_rcp_weight)), 0.0);
+	fragColor = vec4(
+		srgb(saturate(
+			((cas_nbh[1][0] + cas_nbh[0][1] + cas_nbh[2][1] + cas_nbh[1][2]) * weight + cas_nbh[1][1]) / rcp_rcp_weight
+		)),
+		0.0
+	);
 }

@@ -4,7 +4,7 @@
 	All rights reserved unless explicitly stated.
 */
 
-#version 450
+#version 440
 
 layout(depth_unchanged) out lowp float gl_FragDepth;
 

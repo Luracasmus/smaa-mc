@@ -29,7 +29,7 @@
 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#version 450
+#version 440
 
 #define DEBUG_BW 0 // [0 1 2]
 
@@ -41,11 +41,7 @@ layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform lowp sampler2D BlendWeightSampler, SwapSampler;
 
-layout(std140) uniform SamplerInfo {
-	lowp vec2 OutSize; // Unused.
-	lowp vec2 BlendWeightSize; // Unused.
-	highp vec2 SwapSize;
-};
+layout(std140) uniform SamplerInfo { highp vec2 OutSize; };
 
 out lowp vec4 fragColor;
 
@@ -89,7 +85,7 @@ void main() {
 		lowp vec2 blending_weight = h ? a.xz : a.yw;
 		blending_weight /= dot(blending_weight, vec2(1.0));
 
-		immut highp vec2 pix_size = 1.0 / SwapSize;
+		immut highp vec2 pix_size = 1.0 / OutSize;
 		immut highp vec2 lower_texel_coord = gl_FragCoord.xy - 0.5;
 
 		color = blending_weight.x * bilinearSampleSwap(pix_size, lower_texel_coord, blending_offset.xy);

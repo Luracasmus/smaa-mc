@@ -29,7 +29,7 @@
 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#version 450
+#version 440
 
 #define SMAA_SEARCH 112 // [8 16 32 48 64 80 96 112]
 #define SMAA_SEARCH_DIAG 20 // [0 4 8 12 16 20]
@@ -41,12 +41,7 @@ layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform sampler2D AreaSampler, EdgeSampler, SearchSampler;
 
-layout(std140) uniform SamplerInfo {
-	lowp vec2 OutSize; // Unused.
-	lowp vec2 AreaSize; // Unused.
-	highp vec2 EdgeSize;
-	lowp vec2 SearchSize; // Unused.
-};
+layout(std140) uniform SamplerInfo { highp vec2 OutSize; };
 
 out vec4 fragColor;
 
@@ -232,7 +227,7 @@ float search_y_down(vec2 pix_size, vec2 coord, float end) {
 #endif
 
 void main() {
-	immut vec2 pix_size = 1.0 / EdgeSize;
+	immut vec2 pix_size = 1.0 / OutSize;
 	immut lowp ivec2 texel = ivec2(gl_FragCoord.xy);
 	bvec2 e = greaterThanEqual(texelFetch(EdgeSampler, texel, 0).rg, vec2(0.5));
 
@@ -255,7 +250,7 @@ void main() {
 
 					immut float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).r;
 					immut float e2 = textureLodOffset(EdgeSampler, offset_coord.zy, 0.0, ivec2(1, 0)).r;
-					immut vec2 dist = abs(roundEven(fma(offset_coord.xz, EdgeSize.xx, -gl_FragCoord.xy.xx)));
+					immut vec2 dist = abs(roundEven(fma(offset_coord.xz, OutSize.xx, -gl_FragCoord.xy.xx)));
 
 					weights.xy = area(sqrt(dist), e1, e2);
 
@@ -272,7 +267,7 @@ void main() {
 
 			immut float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).g;
 			immut float e2 = textureLodOffset(EdgeSampler, offset_coord.xz, 0.0, ivec2(0, 1)).g;
-			immut vec2 dist = abs(roundEven(fma(offset_coord.yz, EdgeSize.yy, -gl_FragCoord.xy.yy)));
+			immut vec2 dist = abs(roundEven(fma(offset_coord.yz, OutSize.yy, -gl_FragCoord.xy.yy)));
 
 			weights.zw = area(sqrt(dist), e1, e2);
 

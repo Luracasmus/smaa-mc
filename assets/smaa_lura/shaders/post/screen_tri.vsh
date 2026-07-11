@@ -4,7 +4,7 @@
 	All rights reserved unless explicitly stated.
 */
 
-#version 450
+#version 440
 
 #define immut
 

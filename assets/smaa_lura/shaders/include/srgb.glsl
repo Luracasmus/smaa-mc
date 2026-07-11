@@ -4,18 +4,30 @@
 	All rights reserved unless explicitly stated.
 */
 
+lowp float linear(lowp float srgb) {
+	return (srgb > 0.04045)
+		? pow(fma(srgb, 1.0/1.055, 0.055/1.055), 2.4)
+		: (srgb / 12.92);
+}
+
 lowp vec3 linear(lowp vec3 srgb) {
-	return mix(
-		pow((srgb + 0.055) / 1.055, vec3(2.4)),
-		srgb / 12.92,
-		lessThanEqual(srgb, vec3(0.04045))
+	return vec3(
+		linear(srgb.r),
+		linear(srgb.g),
+		linear(srgb.b)
 	);
 }
 
+lowp float srgb(lowp float linear) {
+	return (linear > 0.0031308)
+		? fma(pow(linear, 1.0/2.4), 1.055, -0.055)
+		: (linear * 12.92);
+}
+
 lowp vec3 srgb(lowp vec3 linear) {
-	return mix(
-		1.055 * pow(linear, vec3(1.0/2.4)) - 0.055,
-		12.92 * linear,
-		lessThanEqual(linear, vec3(0.0031308))
+	return vec3(
+		srgb(linear.r),
+		srgb(linear.g),
+		srgb(linear.b)
 	);
 }

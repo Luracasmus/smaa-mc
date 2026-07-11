@@ -29,7 +29,7 @@
 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#version 450
+#version 440
 
 #define SMAA_THRESHOLD 0.05 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
 
@@ -38,11 +38,6 @@
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform lowp sampler2D MainSampler;
-
-layout(std140) uniform SamplerInfo {
-	lowp vec2 OutSize; // Unused.
-	highp vec2 MainSize;
-};
 
 out lowp vec4 fragColor;
 
