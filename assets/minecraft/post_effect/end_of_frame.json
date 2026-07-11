@@ -1,8 +1,5 @@
 {
 	"targets": {
-		"swap": {
-			"persistent": true
-		},
 		"edge_or_swap": {
 			"persistent": true
 		},
@@ -27,20 +24,7 @@
 		},
 		{
 			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/1_blit",
-			"inputs": [
-				{
-					"sampler_name": "Main",
-					"bilinear": false,
-					"target": "minecraft:main",
-					"use_depth_buffer": false
-				}
-			],
-			"output": "swap"
-		},
-		{
-			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/2_bw_calc",
+			"fragment_shader": "smaa_lura:post/1_bw_calc",
 			"inputs": [
 				{
 					"sampler_name": "Area",
@@ -68,12 +52,12 @@
 		},
 		{
 			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/3_blend",
+			"fragment_shader": "smaa_lura:post/2_blend",
 			"inputs": [
 				{
-					"sampler_name": "Swap",
+					"sampler_name": "Main",
 					"bilinear": false,
-					"target": "swap",
+					"target": "minecraft:main",
 					"use_depth_buffer": false
 				},
 				{
@@ -88,7 +72,7 @@
 		},
 		{
 			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/4_cas",
+			"fragment_shader": "smaa_lura:post/3_cas",
 			"inputs": [
 				{
 					"sampler_name": "Swap",

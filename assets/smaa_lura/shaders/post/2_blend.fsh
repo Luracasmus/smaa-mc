@@ -39,16 +39,13 @@
 
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
-uniform lowp sampler2D BlendWeightSampler, SwapSampler;
-
-layout(std140) uniform SamplerInfo { highp vec2 OutSize; };
+uniform lowp sampler2D BlendWeightSampler, MainSampler;
 
 out lowp vec4 fragColor;
 
-// Manual `textureLod(SwapSampler, coord, 0.0).rgb` that actually gets interpolation right,
+// Manual bilinearly filtered sample that actually gets interpolation right,
 // since the texture is in sRGB.
-lowp vec3 bilinearSampleSwap(
-	highp vec2 pix_size, // Screen space scale of one texel.
+lowp vec3 bilinearSampleMain(
 	highp vec2 lower_texel_coord, // Texel space coordinates of the current texel minus `0.5`.
 	highp vec2 blending_offset // Texel space offset.
 ) {
@@ -58,8 +55,8 @@ lowp vec3 bilinearSampleSwap(
 	immut lowp ivec2 texel = ivec2(texel_f32 + 0.5);
 
 	return mix(
-		mix(linear(texelFetch(SwapSampler, texel, 0).rgb), linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0)).rgb), a.x),
-		mix(linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb), linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).rgb), a.x),
+		mix(linear(texelFetch(MainSampler, texel, 0).rgb), linear(texelFetchOffset(MainSampler, texel, 0, ivec2(1, 0)).rgb), a.x),
+		mix(linear(texelFetchOffset(MainSampler, texel, 0, ivec2(0, 1)).rgb), linear(texelFetchOffset(MainSampler, texel, 0, ivec2(1, 1)).rgb), a.x),
 		a.y
 	);
 }
@@ -76,7 +73,7 @@ void main() {
 	lowp vec3 color;
 
 	if (dot(a, vec4(1.0)) < 1.0e-5) {
-		color = texelFetch(SwapSampler, texel, 0).rgb;
+		color = texelFetch(MainSampler, texel, 0).rgb;
 	} else {
 		immut bool h = max(a.x, a.z) > max(a.y, a.w);
 
@@ -85,11 +82,10 @@ void main() {
 		lowp vec2 blending_weight = h ? a.xz : a.yw;
 		blending_weight /= dot(blending_weight, vec2(1.0));
 
-		immut highp vec2 pix_size = 1.0 / OutSize;
 		immut highp vec2 lower_texel_coord = gl_FragCoord.xy - 0.5;
 
-		color = blending_weight.x * bilinearSampleSwap(pix_size, lower_texel_coord, blending_offset.xy);
-		color += blending_weight.y * bilinearSampleSwap(pix_size, lower_texel_coord, blending_offset.zw);
+		color = blending_weight.x * bilinearSampleMain(lower_texel_coord, blending_offset.xy);
+		color += blending_weight.y * bilinearSampleMain(lower_texel_coord, blending_offset.zw);
 		color = srgb(color);
 	}
 
