@@ -1,3 +1,9 @@
+/*
+	Copyright (C) 2024-2026 Luracasmus
+
+	All rights reserved unless explicitly stated.
+*/
+
 // The threshold used in color-based SMAA edge detection.
 // Lower values cause more edges to be anti-aliased.
 #define SMAA_THRESHOLD 0.05 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
