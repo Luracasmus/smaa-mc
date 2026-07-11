@@ -35,7 +35,7 @@
 
 #define immut
 
-layout(depth_unchanged) out lowp float gl_FragDepth;
+out lowp float gl_FragDepth;
 
 uniform sampler2D AreaSampler, EdgeSampler, SearchSampler;
 
@@ -225,18 +225,18 @@ float search_y_down(vec2 pix_size, vec2 coord, float end) {
 #endif
 
 void main() {
-	immut vec2 pix_size = 1.0 / OutSize;
 	immut lowp ivec2 texel = ivec2(gl_FragCoord.xy);
 	bvec2 e = greaterThanEqual(texelFetch(EdgeSampler, texel, 0).rg, vec2(0.5));
 
-	vec4 weights = vec4(0.0);
-
 	if (any(e)) {
+		immut vec2 pix_size = 1.0 / OutSize;
 		immut vec2 coord = gl_FragCoord.xy * pix_size;
 
 		immut vec4 offsets_0 = fma(pix_size.xyxy, vec4(-0.250, -0.125, 1.250, -0.125), coord.xyxy);
 		immut vec4 offsets_1 = fma(pix_size.xyxy, vec4(-0.125, -0.250, -0.125, 1.250), coord.xyxy);
 		immut vec4 offsets_2 = fma(pix_size.xxyy, vec4(ivec4(-2, 2, -2, 2) * SMAA_SEARCH), vec4(offsets_0.xz, offsets_1.yw));
+
+		vec4 weights = vec4(0.0);
 
 		if (e.y) {
 			#if SMAA_SEARCH_DIAG
@@ -273,7 +273,9 @@ void main() {
 				weights.zw *= detect_vertical_corner_pattern(vec3(coord.x, offset_coord.yz), dist);
 			#endif
 		}
-	}
 
-	fragColor = weights;
+		fragColor = weights;
+	} else {
+		discard;
+	}
 }

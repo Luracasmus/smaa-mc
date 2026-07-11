@@ -35,7 +35,7 @@
 
 #define immut
 
-layout(depth_unchanged) out lowp float gl_FragDepth;
+out lowp float gl_FragDepth;
 
 uniform lowp sampler2D MainSampler;
 
@@ -69,8 +69,6 @@ void main() {
 
 	immut bvec2 edges = greaterThanEqual(delta.xy, vec2(SMAA_THRESHOLD));
 
-	lowp vec2 result_value;
-
 	if (any(edges)) {
 		delta.zw = vec2(
 			redmean(color, texelFetchOffset(MainSampler, texel, 0, ivec2(1, 0)).rgb), // Right.
@@ -88,12 +86,12 @@ void main() {
 
 		const lowp float local_contrast_adaptation_factor = 2.0;
 		immut bvec2 temp = greaterThanEqual(delta.xy, (max(delta_max.x, delta_max.y) / local_contrast_adaptation_factor).xx);
-		immut bvec2 result = bvec2(edges.x && temp.x, edges.y && temp.y); // This is required instead of `result && temp` on AMD :(
 
-		result_value = any(result) ? vec2(result) : vec2(0.0);
+		fragColor = vec4(
+			vec2(edges.x && temp.x, edges.y && temp.y), // This is required instead of `result && temp` on AMD :(
+			0.0, 0.0
+		);
 	} else {
-		result_value = vec2(0.0);
+		discard;
 	}
-
-	fragColor = vec4(result_value, 0.0, 0.0);
 }
