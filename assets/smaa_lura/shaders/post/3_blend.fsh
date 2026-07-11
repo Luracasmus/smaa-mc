@@ -31,7 +31,7 @@
 
 #version 440
 
-#define DEBUG_BW 0 // [0 1 2]
+#moj_import <smaa_lura:config.glsl>
 
 #define immut
 

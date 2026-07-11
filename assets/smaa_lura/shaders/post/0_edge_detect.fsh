@@ -31,7 +31,7 @@
 
 #version 440
 
-#define SMAA_THRESHOLD 0.05 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
+#moj_import <smaa_lura:config.glsl>
 
 #define immut
 

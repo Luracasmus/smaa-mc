@@ -31,9 +31,7 @@
 
 #version 440
 
-#define SMAA_SEARCH 112 // [8 16 32 48 64 80 96 112]
-#define SMAA_SEARCH_DIAG 20 // [0 4 8 12 16 20]
-#define SMAA_CORNER 25 // [0 25 50 75 100]
+#moj_import <smaa_lura:config.glsl>
 
 #define immut
 
