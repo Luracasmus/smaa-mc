@@ -41,7 +41,19 @@ uniform lowp sampler2D MainSampler;
 
 out lowp vec4 fragColor;
 
+// Reciprocal/multiplicative inverse of Redmean color difference.
 // https://en.wikipedia.org/wiki/Color_difference#sRGB
+lowp float rcp_redmean(lowp vec3 a, lowp vec3 b) {
+	immut lowp float r = step(0.5, mix(a.r, b.r, 0.5));
+	immut lowp vec3 d = a - b;
+
+	return inversesqrt(dot(d*d, vec3(
+		2.0 + r,
+		4.0,
+		3.0 - r
+	)));
+}
+
 lowp float redmean(lowp vec3 a, lowp vec3 b) {
 	immut lowp float r = step(0.5, mix(a.r, b.r, 0.5));
 	immut lowp vec3 d = a - b;
@@ -61,6 +73,8 @@ void main() {
 	immut lowp vec3 left = texelFetchOffset(MainSampler, texel, 0, ivec2(-1, 0)).rgb;
 	immut lowp vec3 top = texelFetchOffset(MainSampler, texel, 0, ivec2(0, -1)).rgb;
 
+bvec2 result0;
+{
 	lowp vec4 delta;
 	delta.xy = vec2(
 		redmean(color, left),
@@ -68,8 +82,6 @@ void main() {
 	);
 
 	immut bvec2 edges = greaterThanEqual(delta.xy, vec2(SMAA_THRESHOLD));
-
-	lowp vec2 result_value;
 
 	if (any(edges)) {
 		delta.zw = vec2(
@@ -88,12 +100,45 @@ void main() {
 
 		const lowp float local_contrast_adaptation_factor = 2.0;
 		immut bvec2 temp = greaterThanEqual(delta.xy, (max(delta_max.x, delta_max.y) / local_contrast_adaptation_factor).xx);
-		immut bvec2 result = bvec2(edges.x && temp.x, edges.y && temp.y); // This is required instead of `result && temp` on AMD :(
 
-		result_value = any(result) ? vec2(result) : vec2(0.0);
+		result0 = bvec2(edges.x && temp.x, edges.y && temp.y); // This is required instead of `edges && temp` on AMD :(
 	} else {
-		result_value = vec2(0.0);
+		result0 = bvec2(false);
 	}
+}
+bvec2 result1;
+{
+	lowp vec4 rcp_delta;
+	rcp_delta.xy = vec2(
+		rcp_redmean(color, left),
+		rcp_redmean(color, top)
+	);
 
-	fragColor = vec4(result_value, 0.0, 0.0);
+	immut bvec2 edges = lessThanEqual(rcp_delta.xy, vec2(1.0 / SMAA_THRESHOLD));
+
+	if (any(edges)) {
+		rcp_delta.zw = vec2(
+			rcp_redmean(color, texelFetchOffset(MainSampler, texel, 0, ivec2(1, 0)).rgb), // Right.
+			rcp_redmean(color, texelFetchOffset(MainSampler, texel, 0, ivec2(0, 1)).rgb) // Bottom.
+		);
+
+		lowp vec2 rcp_delta_max = min(rcp_delta.xy, rcp_delta.zw);
+
+		rcp_delta.zw = vec2(
+			rcp_redmean(left, texelFetchOffset(MainSampler, texel, 0, ivec2(-2, 0)).rgb), // Left-left.
+			rcp_redmean(top, texelFetchOffset(MainSampler, texel, 0, ivec2(0, -2)).rgb) // Top-top.
+		);
+
+		rcp_delta_max = min(rcp_delta_max.xy, rcp_delta.zw);
+
+		const lowp float local_contrast_adaptation_factor = 2.0;
+		immut bvec2 temp = lessThanEqual(rcp_delta.xy, (min(rcp_delta_max.x, rcp_delta_max.y) * local_contrast_adaptation_factor).xx);
+
+		result1 = bvec2(edges.x && temp.x, edges.y && temp.y); // This is required instead of `edges && temp` on AMD :(
+	} else {
+		result1 = bvec2(false);
+	}
+}
+
+	fragColor = vec4(vec2(result0.x != result1.x, result0.y != result1.y), 0.0, 0.0);
 }
