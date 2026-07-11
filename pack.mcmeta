@@ -4,7 +4,7 @@
 		"max_format": [91, 0],
 		"pack_format": 91,
 		"description": [
-			{ "text": "Post-process anti-aliasing & sharpening\n" },
+			{ "text": "Anti-aliasing & sharpening\n" },
 			{ "text": "By Luracasmus", "color": "dark_gray" }
 		]
 	}
