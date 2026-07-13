@@ -52,7 +52,7 @@ lowp vec3 bilinearSampleMain(
 	immut highp vec2 offset_texel_coord = lower_texel_coord + blending_offset;
 	highp vec2 texel_f32;
 	immut lowp vec2 a = modf(offset_texel_coord, texel_f32);
-	immut lowp ivec2 texel = ivec2(texel_f32 + 0.5);
+	immut lowp ivec2 texel = ivec2(texel_f32);
 
 	return mix(
 		mix(linear(texelFetch(MainSampler, texel, 0).rgb), linear(texelFetchOffset(MainSampler, texel, 0, ivec2(1, 0)).rgb), a.x),
