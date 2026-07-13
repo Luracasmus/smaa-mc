@@ -6,15 +6,15 @@
 
 // The threshold used in color-based SMAA edge detection.
 // Lower values cause more edges to be anti-aliased.
-#define SMAA_THRESHOLD 0.05 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
+#define SMAA_THRESHOLD 0.1 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
 
 // The maximum amount of steps in vertical and horizontal SMAA pattern searches.
 // Distance searched in pixels is double this value.
-#define SMAA_SEARCH 112 // [8 16 32 48 64 80 96 112]
+#define SMAA_SEARCH 32 // [8 16 32 48 64 80 96 112]
 
 // The maximum amount of diagonal steps/pixels searched in SMAA pattern searches.
 // `0` disables diagonal processing.
-#define SMAA_SEARCH_DIAG 20 // [0 4 8 12 16 20]
+#define SMAA_SEARCH_DIAG 16 // [0 4 8 12 16 20]
 
 // SMAA corner rounding.
 // `0` disables corner processing.
