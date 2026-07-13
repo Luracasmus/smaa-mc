@@ -60,19 +60,27 @@ void main() {
 	// g h i
 	//
 	// Some elements are converted to linear later, for performance.
-	immut lowp vec3[3][3] cas_nbh = vec3[3][3](vec3[3](
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1))),
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1))),
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)))
-	), vec3[3](
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0))),
-		decode_swap(texelFetch(SwapSampler, texel, 0)),
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0)))
-	), vec3[3](
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1))),
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1))),
-		decode_swap(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)))
+	immut lowp vec4[3][3] cas_nbh0 = vec4[3][3](vec4[3](
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1))
+	), vec4[3](
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)),
+		texelFetch(SwapSampler, texel, 0),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0))
+	), vec4[3](
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1))
 	));
+
+	immut lowp vec3[3][3] cas_nbh;
+
+	for (lowp uint i = 0u; i < 3; ++i) {
+		for (lowp uint j = 0u; j < 3; ++j) {
+			cas_nbh[i][j] = decode_swap(cas_nbh0[i][j]);
+		}
+	}
 
 	// Soft min. and max.
 	//  a b c             b

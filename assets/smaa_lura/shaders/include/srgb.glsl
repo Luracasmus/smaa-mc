@@ -32,9 +32,9 @@ lowp vec3 srgb(lowp vec3 linear) {
 	);
 }
 
-// Swap buffer color encoding that should be faster than sRGB but not cause any differences to the final color during the conversion:
-// sRGB RGBA8 -> linear RGB32F -> this RGBA8 -> linear RGB32F -> sRGB RGBA8
-// (the encoding should not cause distortion that causes the later linear f32 to round to a different sRGB unorm8 value)
+// Swap buffer color encoding (square root of linear sRGB encoded as R11G11B10 stored in a RGBA8 buffer) that should be faster than sRGB but not cause any differences to the final color during the conversion:
+// sRGB RGBA8 -> linear float -> this -> linear float -> sRGB RGBA8
+// (the encoding should not cause distortion that causes the later linear float to round to a different sRGB unorm8 value)
 //
 // See: https://www.desmos.com/calculator/cln6hdgkjj
 
@@ -47,12 +47,20 @@ lowp vec4 encode_swap(lowp vec3 color) {
 }
 
 lowp vec3 decode_swap(lowp vec4 encoded) {
-	immut highp uint packed_color = packUnorm4x8(encoded);
+	immut lowp uvec4 scaled = uvec4(encoded * 255.0);
+
+	// Transmute the [u8, u8, u8, u8] above into [u11, u11, u10] and scale down to normalized range.
 	immut lowp vec3 square_root = vec3(
-		packed_color & 2047u,
-		bitfieldExtract(packed_color, 11, 11),
-		packed_color >> 22u
+		bitfieldInsert(scaled.r, scaled.g, 8, 3),
+		bitfieldInsert(scaled.g >> 3u, scaled.b, 5, 6),
+		bitfieldInsert(scaled.b >> 6u, scaled.a, 2, 8)
 	) / vec3(2047.0, 2047.0, 1023.0);
 
 	return square_root * square_root;
+}
+
+highp uint pack_unorm8(lowp vec4 v) {
+	immut highp uvec4 scaled = uvec4(fma(v, vec4(255.0), vec4(0.5)));
+
+	return bitfieldInsert(bitfieldInsert(bitfieldInsert(scaled.r, scaled.g, 8, 8), scaled.b, 16, 8), scaled.a, 24, 8);
 }
