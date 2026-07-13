@@ -1,5 +1,6 @@
 /*
 	SMAA 1x Blending Weight Calculation
+	https://www.iryoku.com/smaa/
 	https://github.com/iryoku/smaa
 
 	Copyright (C) 2013 Jorge Jimenez (jorge@iryoku.com)

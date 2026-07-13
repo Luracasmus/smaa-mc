@@ -1,4 +1,4 @@
-A **Vanilla shader resource pack** implementing anti-aliasing and sharpening using the end-of-frame post effect added in Minecraft 26.3 Snapshot 3. The technique is a modified [Enhanced Subpixel Morphological Antialiasing 1x](https://github.com/iryoku/smaa) followed by a modified [FidelityFX Contrast Adaptive Sharpening 1.2](https://gpuopen.com/manuals/fidelityfx_sdk/techniques/contrast-adaptive-sharpening/).
+A **Vanilla shader resource pack** implementing anti-aliasing and sharpening using the end-of-frame post effect added in Minecraft 26.3 Snapshot 3. The technique is a modified [Enhanced Subpixel Morphological Antialiasing 1x](https://www.iryoku.com/smaa/) followed by a modified [FidelityFX Contrast Adaptive Sharpening 1.2](https://gpuopen.com/fidelityfx-cas/).
 
 **The shaders require graphics drivers with support for GLSL 4.40**. If you have a decently modern non-macOS device, it probably supports this, but you might have to update your graphics drivers. If support is missing, the pack will fail to load.
 
