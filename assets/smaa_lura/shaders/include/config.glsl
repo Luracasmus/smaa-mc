@@ -29,6 +29,10 @@
 // The effect is still visible at `0.0`.
 #define CAS_SHARPNESS 0.0 // [0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
+// Use a slower version of the CAS algorithm which takes more samples around each pixel into account.
+// Uncomment the line below (remove `//`) to enable the option:
+// #define CAS_BETTER_DIAGONALS
+
 // Force all variables to use high precision on Vulkan.
 // This may impact performance negatively,
 // but can work around bugs that occur due to how graphics drivers handle relaxed precision.

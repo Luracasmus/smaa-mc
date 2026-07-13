@@ -45,11 +45,12 @@ out lowp vec4 fragColor;
 	#define cas_max3(a, b, c) max3(a, b, c)
 #else
 	// These without the `cas_`-prefixes seem to collide with built-in functions somehow on Vulkan on AMD+Mesa.
-	lowp vec3 cas_min3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return min(a, min(b, c)); }
-	lowp vec3 cas_max3(lowp vec3 a, lowp vec3 b, lowp vec3 c) { return max(a, max(b, c)); }
+	lowp float cas_min3(lowp float a, lowp float b, lowp float c) { return min(a, min(b, c)); }
+	lowp float cas_max3(lowp float a, lowp float b, lowp float c) { return max(a, max(b, c)); }
 #endif
 
-lowp vec3 saturate(lowp vec3 v) { return clamp(v, 0.0, 1.0); }
+#define saturate(v) clamp(v, 0.0, 1.0)
+
 lowp float luminance(lowp vec3 color) { return dot(color, vec3(0.299, 0.587, 0.114)); }
 
 void main() {
@@ -58,48 +59,45 @@ void main() {
 	// a b c
 	// d e f
 	// g h i
-	//
-	// Some elements are converted to linear later, for performance.
-	immut lowp vec3[3][3] cas_nbh = vec3[3][3](vec3[3](
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).rgb,
-		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)).rgb),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).rgb
-	), vec3[3](
-		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)).rgb),
-		linear(texelFetch(SwapSampler, texel, 0).rgb),
-		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0)).rgb)
-	), vec3[3](
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)).rgb,
-		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).rgb
-	));
+	immut lowp vec3 b = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)).rgb);
+	immut lowp vec3 d = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)).rgb);
+	immut lowp vec3 e = linear(texelFetch(SwapSampler, texel, 0).rgb);
+	immut lowp vec3 f = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).rgb);
+	immut lowp vec3 h = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb);
 
 	// Soft min. and max.
 	//  a b c             b
 	//  d e f * 0.5  +  d e f * 0.5
 	//  g h i             h
 	// These are 2.0x bigger (factored out the extra multiply).
-	//
-	// Converting to linear after the min/max here is correct,
-	// since the sRGB -> linear function is increasing over [0, 1].
-	lowp vec3 minimum = cas_min3(cas_min3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	minimum += min(minimum, linear(min(cas_min3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2])));
+	lowp float minimum = cas_min3(cas_min3(d.g, e.g, f.g), b.g, h.g);
+	lowp float maximum = cas_max3(cas_max3(d.g, e.g, f.g), b.g, h.g);
 
-	lowp vec3 maximum = cas_max3(cas_max3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	maximum += max(maximum, linear(max(cas_max3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2])));
+	#ifdef CAS_BETTER_DIAGONALS
+		immut lowp float a = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).g;
+		immut lowp float c = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).g;
+		immut lowp float g = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)).g;
+		immut lowp float i = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).g;
+
+		// Converting to linear after the min/max here is correct,
+		// since the sRGB -> linear function is increasing over [0, 1].
+
+		minimum += min(minimum, linear(min(cas_min3(a, c, g), i)));
+		maximum += max(maximum, linear(max(cas_max3(a, c, g), i)));
+	#endif
 
 	// Smooth minimum distance to signal limit divided by smooth max.
-	immut lowp vec3 amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
+	immut lowp float amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
 
 	// Filter shape:
 	// 0 w 0
 	// w 1 w
 	// 0 w 0
 	const lowp float sharpness = -1.0 / mix(8.0, 5.0, CAS_SHARPNESS);
-	immut lowp float weight = sharpness * luminance(amplify);
+	immut lowp float weight = sharpness * amplify;
 	immut lowp float rcp_rcp_weight = fma(weight, 4.0, 1.0); // This naming is cursed.
 
 	fragColor = vec4(srgb(saturate(
-		((cas_nbh[1][0] + cas_nbh[0][1] + cas_nbh[2][1] + cas_nbh[1][2]) * weight + cas_nbh[1][1]) / rcp_rcp_weight
+		((b + d + f + h) * weight + e) / rcp_rcp_weight
 	)), 0.0);
 }
