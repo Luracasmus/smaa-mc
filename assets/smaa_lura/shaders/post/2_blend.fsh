@@ -73,7 +73,7 @@ void main() {
 	lowp vec3 color;
 
 	if (dot(a, vec4(1.0)) < 1.0e-5) {
-		color = linear(texelFetch(MainSampler, texel, 0).rgb);
+		color = texelFetch(MainSampler, texel, 0).rgb;
 	} else {
 		immut bool h = max(a.x, a.z) > max(a.y, a.w);
 
@@ -86,6 +86,7 @@ void main() {
 
 		color = blending_weight.x * bilinearSampleMain(lower_texel_coord, blending_offset.xy);
 		color += blending_weight.y * bilinearSampleMain(lower_texel_coord, blending_offset.zw);
+		color = srgb(color);
 	}
 
 	#if DEBUG_BW
@@ -98,5 +99,5 @@ void main() {
 		color = texelFetch(BlendWeightSampler, texel, 0).DEBUG_BW_COMP;
 	#endif
 
-	fragColor = encode_swap(color);
+	fragColor = vec4(color, 0.0);
 }

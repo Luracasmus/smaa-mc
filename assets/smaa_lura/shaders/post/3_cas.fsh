@@ -60,27 +60,19 @@ void main() {
 	// g h i
 	//
 	// Some elements are converted to linear later, for performance.
-	immut lowp vec4[3][3] cas_nbh0 = vec4[3][3](vec4[3](
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1))
-	), vec4[3](
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)),
-		texelFetch(SwapSampler, texel, 0),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0))
-	), vec4[3](
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)),
-		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1))
+	immut lowp vec3[3][3] cas_nbh = vec3[3][3](vec3[3](
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).rgb,
+		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)).rgb),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).rgb
+	), vec3[3](
+		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)).rgb),
+		linear(texelFetch(SwapSampler, texel, 0).rgb),
+		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 0)).rgb)
+	), vec3[3](
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)).rgb,
+		linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb),
+		texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).rgb
 	));
-
-	immut lowp vec3[3][3] cas_nbh;
-
-	for (lowp uint i = 0u; i < 3; ++i) {
-		for (lowp uint j = 0u; j < 3; ++j) {
-			cas_nbh[i][j] = decode_swap(cas_nbh0[i][j]);
-		}
-	}
 
 	// Soft min. and max.
 	//  a b c             b
@@ -91,10 +83,10 @@ void main() {
 	// Converting to linear after the min/max here is correct,
 	// since the sRGB -> linear function is increasing over [0, 1].
 	lowp vec3 minimum = cas_min3(cas_min3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	minimum += cas_min3(minimum, cas_min3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2]);
+	minimum += min(minimum, linear(min(cas_min3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2])));
 
 	lowp vec3 maximum = cas_max3(cas_max3(cas_nbh[0][1], cas_nbh[1][1], cas_nbh[2][1]), cas_nbh[1][0], cas_nbh[1][2]);
-	maximum += cas_max3(maximum, cas_max3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2]);
+	maximum += max(maximum, linear(max(cas_max3(cas_nbh[0][0], cas_nbh[2][0], cas_nbh[0][2]), cas_nbh[2][2])));
 
 	// Smooth minimum distance to signal limit divided by smooth max.
 	immut lowp vec3 amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
