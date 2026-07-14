@@ -2,11 +2,11 @@
 
 #extension GL_AMD_shader_trinary_minmax : enable
 
-#moj_import <smaa_lura:config.glsl>
+#moj_import <grindstone:config.glsl>
 
 #define immut
 
-#moj_import <smaa_lura:srgb.glsl>
+#moj_import <grindstone:srgb.glsl>
 
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
