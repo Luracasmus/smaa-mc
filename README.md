@@ -8,9 +8,3 @@ When Minecraft is using the Vulkan graphics API, the shaders may use lower preci
 
 All configurable options are located in [assets/grindstone/shaders/include/config.glsl](assets/grindstone/shaders/include/config.glsl) inside the resource pack,
 and can be modified with a text editor. The changes are applied when the pack is reloaded.
-
-## License
-
-> *See [LICENSE.txt](LICENSE.txt)*
-
-Some parts of this resource pack are licensed "All rights reserved unless explicitly stated", and some are licensed more permissively. This is to prevent unmodified or barely modified copies of the pack from being distributed without permission. Please contact me if you want to use the files for anything not permitted by the licenses.
