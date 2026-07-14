@@ -1,9 +1,3 @@
-/*
-	Copyright (C) 2026 Luracasmus
-
-	All rights reserved unless explicitly stated.
-*/
-
 #version 440
 
 #define immut

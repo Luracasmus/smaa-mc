@@ -1,9 +1,3 @@
-/*
-	Copyright (C) 2024-2026 Luracasmus
-
-	All rights reserved unless explicitly stated.
-*/
-
 lowp float linear(lowp float srgb) {
 	return (srgb > 0.04045)
 		? pow(fma(srgb, 1.0/1.055, 0.055/1.055), 2.4)

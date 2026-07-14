@@ -2,13 +2,15 @@ A **Vanilla shader resource pack** implementing anti-aliasing and sharpening usi
 
 **The shaders require graphics drivers with support for GLSL 4.40**. If you have a decently modern non-macOS device, it probably supports this, but you might have to update your graphics drivers. If support is missing, the pack will fail to load.
 
+When Minecraft is using the Vulkan graphics API, the shaders may use lower precision math to improve performance. The behavior of this feature depends on your GPU and graphics drivers. Try switching graphics API if you're experiencing issues with the shaders, and please report them on [the issue tracker](https://github.com/Luracasmus/smaa-mc/issues).
+
 ## Configuration
 
-All configurable options are located in [assets/smaa_lura/shaders/include/config.glsl](assets/smaa_lura/shaders/include/config.glsl) inside the resource pack,
+All configurable options are located in [assets/grindstone/shaders/include/config.glsl](assets/grindstone/shaders/include/config.glsl) inside the resource pack,
 and can be modified with a text editor. The changes are applied when the pack is reloaded.
 
 ## License
 
-*See [LICENSE.txt](LICENSE.txt) and each individual file.*
+> *See [LICENSE.txt](LICENSE.txt)*
 
-The resource pack contains some files licensed "All rights reserved unless explicitly stated." and some under more permissive licenses (the ones deemed more likely useful for inclusion in other projects). This is to prevent unmodified or barely modified copies of the pack from being distributed without permission. Please contact me if you want to use the files for anything not permitted by the licenses.
+Some parts of this resource pack are licensed "All rights reserved unless explicitly stated", and some are licensed more permissively. This is to prevent unmodified or barely modified copies of the pack from being distributed without permission. Please contact me if you want to use the files for anything not permitted by the licenses.

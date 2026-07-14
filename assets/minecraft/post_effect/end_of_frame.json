@@ -11,8 +11,8 @@
 	},
 	"passes": [
 		{
-			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/0_edge_detect",
+			"vertex_shader": "grindstone:post/screen_tri",
+			"fragment_shader": "grindstone_smaa:post/0_edge_detect",
 			"inputs": [
 				{
 					"sampler_name": "Main",
@@ -25,13 +25,13 @@
 			"uniforms": {}
 		},
 		{
-			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/1_bw_calc",
+			"vertex_shader": "grindstone:post/screen_tri",
+			"fragment_shader": "grindstone_smaa:post/1_bw_calc",
 			"inputs": [
 				{
 					"sampler_name": "Area",
 					"bilinear": true,
-					"location": "smaa_lura:area",
+					"location": "grindstone_smaa:area",
 					"width": 160,
 					"height": 560
 				},
@@ -44,7 +44,7 @@
 				{
 					"sampler_name": "Search",
 					"bilinear": false,
-					"location": "smaa_lura:search",
+					"location": "grindstone_smaa:search",
 					"width": 64,
 					"height": 16
 				}
@@ -53,8 +53,8 @@
 			"uniforms": {}
 		},
 		{
-			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/2_blend",
+			"vertex_shader": "grindstone:post/screen_tri",
+			"fragment_shader": "grindstone_smaa:post/2_blend",
 			"inputs": [
 				{
 					"sampler_name": "Main",
@@ -73,8 +73,8 @@
 			"uniforms": {}
 		},
 		{
-			"vertex_shader": "smaa_lura:post/screen_tri",
-			"fragment_shader": "smaa_lura:post/3_cas",
+			"vertex_shader": "grindstone:post/screen_tri",
+			"fragment_shader": "grindstone_cas:post/3_cas",
 			"inputs": [
 				{
 					"sampler_name": "Swap",
