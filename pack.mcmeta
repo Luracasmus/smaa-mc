@@ -1,11 +1,1 @@
-{
-	"pack": {
-		"min_format": [91, 0],
-		"max_format": [91, 0],
-		"pack_format": 91,
-		"description": [
-			{ "text": "Anti-aliasing & sharpening\n" },
-			{ "text": "By Luracasmus", "color": "dark_gray" }
-		]
-	}
-}
+{"pack":{"min_format":[91,0],"max_format":[92,0],"pack_format":92,"description":[{"text":"Anti-aliasing & sharpening\n"},{"text":"By Luracasmus","color":"dark_gray"}]}}
