@@ -4,7 +4,7 @@
 
 // The maximum amount of steps in vertical and horizontal SMAA pattern searches.
 // Distance searched in pixels is double this value. Higher values improve quality at the cost of performance.
-#define SMAA_SEARCH 32 // [8 16 32 48 64 80 96 112]
+#define SMAA_SEARCH 32 // [4 8 16 32 48 64 80 96 112]
 
 // The maximum amount of diagonal steps/pixels searched in SMAA pattern searches.
 // Higher values improve quality at the cost of performance. `0` disables diagonal processing.
