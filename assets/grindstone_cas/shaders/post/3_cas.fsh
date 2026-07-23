@@ -1,18 +1,15 @@
 #version 440
-
+#extension GL_ARB_separate_shader_objects : require
 #extension GL_AMD_shader_trinary_minmax : enable
 
-#moj_import <grindstone:config.glsl>
-
-#define immut
-
-#moj_import <grindstone:srgb.glsl>
+#include <grindstone:config.glsl>
+#include <grindstone:srgb.glsl>
 
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform lowp sampler2D SwapSampler;
 
-out lowp vec4 fragColor;
+layout(location = 0) out lowp vec4 fragColor;
 
 #ifdef GL_AMD_shader_trinary_minmax
 	#define cas_min3(a, b, c) min3(a, b, c)
@@ -26,16 +23,16 @@ out lowp vec4 fragColor;
 #define saturate(v) clamp(v, 0.0, 1.0)
 
 void main() {
-	immut lowp ivec2 texel = ivec2(gl_FragCoord.xy);
+	const lowp ivec2 texel = ivec2(gl_FragCoord.xy);
 
 	// a b c
 	// d e f
 	// g h i
-	immut lowp vec3 b = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)).rgb);
-	immut lowp vec3 d = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)).rgb);
-	immut lowp vec3 e = linear(texelFetch(SwapSampler, texel, 0).rgb);
-	immut lowp vec3 f = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).rgb);
-	immut lowp vec3 h = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb);
+	const lowp vec3 b = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, -1)).rgb);
+	const lowp vec3 d = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 0)).rgb);
+	const lowp vec3 e = linear(texelFetch(SwapSampler, texel, 0).rgb);
+	const lowp vec3 f = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).rgb);
+	const lowp vec3 h = linear(texelFetchOffset(SwapSampler, texel, 0, ivec2(0, 1)).rgb);
 
 	// Soft min. and max.
 	//  a b c             b
@@ -46,10 +43,10 @@ void main() {
 	lowp float maximum = cas_max3(cas_max3(d.g, e.g, f.g), b.g, h.g);
 
 	#ifdef CAS_BETTER_DIAGONALS
-		immut lowp float a = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).g;
-		immut lowp float c = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).g;
-		immut lowp float g = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)).g;
-		immut lowp float i = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).g;
+		const lowp float a = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).g;
+		const lowp float c = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, -1)).g;
+		const lowp float g = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, 1)).g;
+		const lowp float i = texelFetchOffset(SwapSampler, texel, 0, ivec2(1, 1)).g;
 
 		// Converting to linear after the min/max here is correct,
 		// since the sRGB -> linear function is increasing over [0, 1].
@@ -59,15 +56,15 @@ void main() {
 	#endif
 
 	// Smooth minimum distance to signal limit divided by smooth max.
-	immut lowp float amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
+	const lowp float amplify = sqrt(saturate(min(minimum, 2.0 - maximum) / maximum));
 
 	// Filter shape:
 	// 0 w 0
 	// w 1 w
 	// 0 w 0
 	const lowp float sharpness = -1.0 / mix(8.0, 5.0, CAS_SHARPNESS);
-	immut lowp float weight = sharpness * amplify;
-	immut lowp float rcp_rcp_weight = fma(weight, 4.0, 1.0); // This naming is cursed.
+	const lowp float weight = sharpness * amplify;
+	const lowp float rcp_rcp_weight = fma(weight, 4.0, 1.0); // This naming is cursed.
 
 	fragColor = vec4(srgb(saturate(
 		((b + d + f + h) * weight + e) / rcp_rcp_weight

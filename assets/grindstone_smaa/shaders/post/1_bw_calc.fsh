@@ -1,8 +1,7 @@
 #version 440
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <grindstone:config.glsl>
-
-#define immut
+#include <grindstone:config.glsl>
 
 out lowp float gl_FragDepth;
 
@@ -10,7 +9,7 @@ uniform sampler2D AreaSampler, EdgeSampler, SearchSampler;
 
 layout(std140) uniform SamplerInfo { highp vec2 OutSize; };
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 vec2 saturate(vec2 v) { return clamp(v, 0.0, 1.0); }
 
@@ -73,7 +72,7 @@ vec2 saturate(vec2 v) { return clamp(v, 0.0, 1.0); }
 		d.yw = search_diag_1(pix_size, coord, ivec2(1, -1), end);
 
 		if (d.x + d.y > 2.0) {
-			immut vec4 offset_coord = fma(vec4(0.25 - d.x, d.x, d.y, -d.y - 0.25), pix_size.xyxy, coord.xyxy);
+			const vec4 offset_coord = fma(vec4(0.25 - d.x, d.x, d.y, -d.y - 0.25), pix_size.xyxy, coord.xyxy);
 			vec4 c = vec4(
 				textureLodOffset(EdgeSampler, offset_coord.xy, 0.0, ivec2(-1, 0)).rg,
 				textureLodOffset(EdgeSampler, offset_coord.zw, 0.0, ivec2(1, 0)).rg
@@ -91,8 +90,8 @@ vec2 saturate(vec2 v) { return clamp(v, 0.0, 1.0); }
 		} else d.yw = vec2(0.0);
 
 		if (d.x + d.y > 2.0) {
-			immut vec4 offset_coord = fma(vec4(-d.xx, d.yy), pix_size.xyxy, coord.xyxy);
-			immut vec4 c = vec4(
+			const vec4 offset_coord = fma(vec4(-d.xx, d.yy), pix_size.xyxy, coord.xyxy);
+			const vec4 c = vec4(
 				textureLodOffset(EdgeSampler, offset_coord.xy, 0.0, ivec2(-1, 0)).g,
 				textureLodOffset(EdgeSampler, offset_coord.xy, 0.0, ivec2(0, -1)).r,
 				textureLodOffset(EdgeSampler, offset_coord.zw, 0.0, ivec2(1, 0)).gr
@@ -158,12 +157,12 @@ float search_y_down(vec2 pix_size, vec2 coord, float end) {
 
 #if SMAA_CORNER
 	vec2 corner_rounding(vec2 d) {
-		immut vec2 left_right = step(d, d.yx);
+		const vec2 left_right = step(d, d.yx);
 		return (1.0 - float(SMAA_CORNER) / 100.0) * left_right / (left_right.x + left_right.y);
 	}
 
 	vec2 detect_horizontal_corner_pattern(vec3 coord, vec2 d) {
-		immut vec2 rounding = corner_rounding(d);
+		const vec2 rounding = corner_rounding(d);
 
 		return clamp(1.0 - vec2(
 			dot(rounding, vec2(
@@ -178,7 +177,7 @@ float search_y_down(vec2 pix_size, vec2 coord, float end) {
 	}
 
 	vec2 detect_vertical_corner_pattern(vec3 coord, vec2 d) {
-		immut vec2 rounding = corner_rounding(d);
+		const vec2 rounding = corner_rounding(d);
 
 		return clamp(1.0 - vec2(
 			dot(rounding, vec2(
@@ -194,16 +193,16 @@ float search_y_down(vec2 pix_size, vec2 coord, float end) {
 #endif
 
 void main() {
-	immut lowp ivec2 texel = ivec2(gl_FragCoord.xy);
+	const lowp ivec2 texel = ivec2(gl_FragCoord.xy);
 	bvec2 e = greaterThanEqual(texelFetch(EdgeSampler, texel, 0).rg, vec2(0.5));
 
 	if (any(e)) {
-		immut vec2 pix_size = 1.0 / OutSize;
-		immut vec2 coord = gl_FragCoord.xy * pix_size;
+		const vec2 pix_size = 1.0 / OutSize;
+		const vec2 coord = gl_FragCoord.xy * pix_size;
 
-		immut vec4 offsets_0 = fma(pix_size.xyxy, vec4(-0.250, -0.125, 1.250, -0.125), coord.xyxy);
-		immut vec4 offsets_1 = fma(pix_size.xyxy, vec4(-0.125, -0.250, -0.125, 1.250), coord.xyxy);
-		immut vec4 offsets_2 = fma(pix_size.xxyy, vec4(ivec4(-2, 2, -2, 2) * SMAA_SEARCH), vec4(offsets_0.xz, offsets_1.yw));
+		const vec4 offsets_0 = fma(pix_size.xyxy, vec4(-0.250, -0.125, 1.250, -0.125), coord.xyxy);
+		const vec4 offsets_1 = fma(pix_size.xyxy, vec4(-0.125, -0.250, -0.125, 1.250), coord.xyxy);
+		const vec4 offsets_2 = fma(pix_size.xxyy, vec4(ivec4(-2, 2, -2, 2) * SMAA_SEARCH), vec4(offsets_0.xz, offsets_1.yw));
 
 		vec4 weights = vec4(0.0);
 
@@ -213,11 +212,11 @@ void main() {
 
 				if (weights.x == -weights.y) {
 			#endif
-					immut vec3 offset_coord = vec3(search_x_left(pix_size, offsets_0.xy, offsets_2.x), offsets_1.y, search_x_right(pix_size, offsets_0.zw, offsets_2.y));
+					const vec3 offset_coord = vec3(search_x_left(pix_size, offsets_0.xy, offsets_2.x), offsets_1.y, search_x_right(pix_size, offsets_0.zw, offsets_2.y));
 
-					immut float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).r;
-					immut float e2 = textureLodOffset(EdgeSampler, offset_coord.zy, 0.0, ivec2(1, 0)).r;
-					immut vec2 dist = abs(roundEven(fma(offset_coord.xz, OutSize.xx, -gl_FragCoord.xy.xx)));
+					const float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).r;
+					const float e2 = textureLodOffset(EdgeSampler, offset_coord.zy, 0.0, ivec2(1, 0)).r;
+					const vec2 dist = abs(roundEven(fma(offset_coord.xz, OutSize.xx, -gl_FragCoord.xy.xx)));
 
 					weights.xy = area(sqrt(dist), e1, e2);
 
@@ -230,11 +229,11 @@ void main() {
 		}
 
 		if (e.x) {
-			immut vec3 offset_coord = vec3(offsets_0.x, search_y_up(pix_size, offsets_1.xy, offsets_2.z), search_y_down(pix_size, offsets_1.zw, offsets_2.w));
+			const vec3 offset_coord = vec3(offsets_0.x, search_y_up(pix_size, offsets_1.xy, offsets_2.z), search_y_down(pix_size, offsets_1.zw, offsets_2.w));
 
-			immut float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).g;
-			immut float e2 = textureLodOffset(EdgeSampler, offset_coord.xz, 0.0, ivec2(0, 1)).g;
-			immut vec2 dist = abs(roundEven(fma(offset_coord.yz, OutSize.yy, -gl_FragCoord.xy.yy)));
+			const float e1 = textureLod(EdgeSampler, offset_coord.xy, 0.0).g;
+			const float e2 = textureLodOffset(EdgeSampler, offset_coord.xz, 0.0, ivec2(0, 1)).g;
+			const vec2 dist = abs(roundEven(fma(offset_coord.yz, OutSize.yy, -gl_FragCoord.xy.yy)));
 
 			weights.zw = area(sqrt(dist), e1, e2);
 
