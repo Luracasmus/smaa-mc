@@ -2,6 +2,10 @@
 // Lower values cause more edges to be detected and possibly anti-aliased. Higher values usually improve performance.
 #define SMAA_THRESHOLD 0.1 // [0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5]
 
+// Local contrast adaptation factor.
+// Lower values cause more edges to be skipped when higher contrast edges are nearby, which usually improves performance.
+#define SMAA_LCA 1.1 // [1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+
 // The maximum amount of steps in vertical and horizontal SMAA pattern searches.
 // Distance searched in pixels is double this value. Higher values improve quality at the cost of performance.
 #define SMAA_SEARCH 32 // [4 8 16 32 48 64 80 96 112]

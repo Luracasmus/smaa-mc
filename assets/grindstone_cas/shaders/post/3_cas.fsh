@@ -5,22 +5,18 @@
 #include <grindstone:config.glsl>
 #include <grindstone:srgb.glsl>
 
+#ifndef GL_AMD_shader_trinary_minmax
+	#define min3(a, b, c) min(a, min(b, c))
+	#define max3(a, b, c) max(a, max(b, c))
+#endif
+
+#define saturate(v) clamp(v, 0.0, 1.0)
+
 layout(depth_unchanged) out lowp float gl_FragDepth;
 
 uniform lowp sampler2D SwapSampler;
 
 layout(location = 0) out lowp vec4 fragColor;
-
-#ifdef GL_AMD_shader_trinary_minmax
-	#define cas_min3(a, b, c) min3(a, b, c)
-	#define cas_max3(a, b, c) max3(a, b, c)
-#else
-	// These without the `cas_`-prefixes seem to collide with built-in functions somehow on Vulkan on AMD+Mesa.
-	lowp float cas_min3(lowp float a, lowp float b, lowp float c) { return min(a, min(b, c)); }
-	lowp float cas_max3(lowp float a, lowp float b, lowp float c) { return max(a, max(b, c)); }
-#endif
-
-#define saturate(v) clamp(v, 0.0, 1.0)
 
 void main() {
 	const lowp ivec2 texel = ivec2(gl_FragCoord.xy);
@@ -39,8 +35,8 @@ void main() {
 	//  d e f * 0.5  +  d e f * 0.5
 	//  g h i             h
 	// These are 2.0x bigger (factored out the extra multiply).
-	lowp float minimum = cas_min3(cas_min3(d.g, e.g, f.g), b.g, h.g);
-	lowp float maximum = cas_max3(cas_max3(d.g, e.g, f.g), b.g, h.g);
+	lowp float minimum = min3(min3(d.g, e.g, f.g), b.g, h.g);
+	lowp float maximum = max3(max3(d.g, e.g, f.g), b.g, h.g);
 
 	#ifdef CAS_BETTER_DIAGONALS
 		const lowp float a = texelFetchOffset(SwapSampler, texel, 0, ivec2(-1, -1)).g;
@@ -51,8 +47,8 @@ void main() {
 		// Converting to linear after the min/max here is correct,
 		// since the sRGB -> linear function is increasing over [0, 1].
 
-		minimum += min(minimum, linear(min(cas_min3(a, c, g), i)));
-		maximum += max(maximum, linear(max(cas_max3(a, c, g), i)));
+		minimum += min(minimum, linear(min(min3(a, c, g), i)));
+		maximum += max(maximum, linear(max(max3(a, c, g), i)));
 	#endif
 
 	// Smooth minimum distance to signal limit divided by smooth max.
