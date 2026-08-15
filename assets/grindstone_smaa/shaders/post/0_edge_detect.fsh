@@ -3,6 +3,7 @@
 #extension GL_AMD_shader_trinary_minmax : enable
 
 #include <grindstone:config.glsl>
+#include <grindstone:redmean.glsl>
 
 #ifndef GL_AMD_shader_trinary_minmax
 	#define max3(a, b, c) max(a, max(b, c))
@@ -13,23 +14,6 @@ out lowp float gl_FragDepth;
 uniform lowp sampler2D MainSampler;
 
 layout(location = 0) out lowp vec4 fragColor;
-
-// Squared redmean color difference.
-//
-// We square the contrast threshold and LCA factor to compensate for this being squared,
-// making the actual color difference metric regular redmean.
-//
-// https://en.wikipedia.org/wiki/Color_difference#sRGB
-lowp float sq_redmean(lowp vec3 a, lowp vec3 b) {
-	const lowp float r = step(0.5, mix(a.r, b.r, 0.5));
-	const lowp vec3 d = a - b;
-
-	return dot(d*d, vec3(
-		2.0 + r,
-		4.0,
-		3.0 - r
-	));
-}
 
 void main() {
 	const lowp ivec2 texel = ivec2(gl_FragCoord.xy);
@@ -43,6 +27,8 @@ void main() {
 		sq_redmean(color, top)
 	);
 
+	// We square the contrast threshold and LCA factor to compensate for the color difference being squared,
+	// making the actual color difference metric regular redmean.
 	const bvec2 edges = greaterThanEqual(delta, (SMAA_THRESHOLD*SMAA_THRESHOLD).xx);
 
 	if (any(edges)) {
