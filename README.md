@@ -2,7 +2,7 @@ A **Vanilla shader resource pack** implementing anti-aliasing and sharpening usi
 
 **The shaders require graphics drivers with support for GLSL 4.40**. If you have a decently modern non-macOS device, it probably supports this, but you might have to update your graphics drivers. If support is missing, the pack will fail to load.
 
-When Minecraft is using the Vulkan graphics API, the shaders may use lower precision math to improve performance. The behavior of this feature depends on your GPU and graphics drivers. Try switching graphics API if you're experiencing issues with the shaders, and please report them on [the issue tracker](https://github.com/Luracasmus/smaa-mc/issues).
+When Minecraft is using the Vulkan graphics API, the shaders may use lower precision math to improve performance. The behavior of this feature depends on your GPU and graphics drivers. Try switching graphics API if you're experiencing issues with the shaders, and please report them on [the issue tracker](https://github.com/Luracasmus/grindstone/issues).
 
 ## Configuration
 
