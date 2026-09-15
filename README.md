@@ -6,10 +6,10 @@ When Minecraft is using the Vulkan graphics API, the shaders may use lower preci
 
 ## Configuration
 
-All configurable options are located in [assets/grindstone/shaders/include/config.glsl](assets/grindstone/shaders/include/config.glsl) inside the resource pack,
+All configurable options are located in [`assets/grindstone/shaders/include/config.glsl`](assets/grindstone/shaders/include/config.glsl) inside the resource pack,
 and can be modified with a text editor. The changes are applied when the pack is reloaded.
 
-## Older versions (called SMAA-MC)
+## Older versions (named SMAA-MC)
 
 Versions older than v2.0 are written as Iris shader packs rather than vanilla resource packs, and can be used with some Minecraft versions older than 26.3. They only implement SMAA 1x, with no sharpening, and re-implement vanilla-like rendering using code from [Base-460C](https://github.com/Luracasmus/Base-460C).
 
